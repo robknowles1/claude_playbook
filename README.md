@@ -23,7 +23,7 @@ When you run `make -f .../Makefile init STACK=rails` from a target project, the 
 This repo lives at `~/repos/claude_playbook`. If you push it to GitHub in future, clone it to that path on each machine:
 
 ```bash
-git clone <your-remote-url> ~/repos/claude_playbook
+git clone git@github.com:robknowles1/claude_playbook.git ~/repos/claude_playbook
 ```
 
 ### 2. Add a shell alias (recommended)
