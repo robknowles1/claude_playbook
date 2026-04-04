@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//private/tmp/**)",
+      "Bash(rm -rf playbook_test)",
+      "Bash(mkdir playbook_test)",
+      "Bash(bash /Users/robertknowles/repos/claude_playbook/scripts/merge-agents.sh rails /tmp/playbook_test)"
+    ]
+  }
+}

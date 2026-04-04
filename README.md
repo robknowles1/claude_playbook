@@ -49,7 +49,7 @@ claude-init STACK=react
 claude-init
 ```
 
-This creates `.claude/agents/*.md` in the target project. Claude Code automatically loads agents from that directory.
+This creates `.claude/agents/<name>/AGENT.md` and `.claude/skills/<name>/SKILL.md` in the target project. Claude Code automatically loads agents and skills from those directories.
 
 ### 4. Copy the CLAUDE.md template
 
@@ -114,13 +114,22 @@ DevOps, Scribe, and Security are invoked as needed alongside this flow.
 | `rails` | developer, reviewer, qa, devops |
 | `react` | developer, reviewer, qa |
 
+## Adding a New Agent
+
+1. Create `agents/base/<agent-name>.md` with the standard frontmatter (`name`, `description`, `tools`) and role content.
+2. Add stack overlays in `agents/stacks/<stack>/<agent-name>.md` for any stacks where the agent needs stack-specific content. Overlays are pure markdown, no frontmatter.
+3. Add a corresponding entry to the **Agents** table in this README.
+
+The merge script automatically generates both the `.claude/agents/<name>/AGENT.md` and `.claude/skills/<name>/SKILL.md` for every agent it installs. **Every agent must have a matching skill** — this is handled automatically at install time; no extra step required.
+
 ## Adding a New Stack
 
 1. Create `agents/stacks/<your-stack>/` directory.
 2. Add overlay files for any agents you want to extend. Filename must match the base agent (e.g. `developer.md`).
 3. Overlay files are **pure markdown, no frontmatter** — they are appended after the base content with a horizontal rule separator.
+4. Add the stack to the **Available Stacks** table in this README.
 
-That's it. The merge script picks up the new stack automatically.
+The merge script picks up the new stack automatically. Skills are generated for every agent in the stack — no extra step required.
 
 ## Project Structure
 
@@ -129,9 +138,9 @@ claude_playbook/
 ├── README.md
 ├── Makefile                          ← invoke from any project
 ├── scripts/
-│   └── merge-agents.sh              ← merge logic
+│   └── merge-agents.sh              ← merges base + overlay, writes agents + skills
 ├── agents/
-│   ├── base/                        ← 8 stack-agnostic agents
+│   ├── base/                        ← 8 stack-agnostic agent source files
 │   │   ├── architect.md
 │   │   ├── developer.md
 │   │   ├── devops.md
@@ -152,4 +161,24 @@ claude_playbook/
 │           └── reviewer.md
 └── templates/
     └── CLAUDE.md                    ← copy this into new projects and fill it in
+```
+
+### What gets installed into target projects
+
+`make init` writes the following structure into `<TARGET>/.claude/`:
+
+```
+.claude/
+├── agents/
+│   ├── developer/
+│   │   └── AGENT.md                ← merged base + stack content
+│   ├── reviewer/
+│   │   └── AGENT.md
+│   └── ...                         ← one directory per agent
+└── skills/
+    ├── developer/
+    │   └── SKILL.md                ← auto-generated, invokes the matching agent
+    ├── reviewer/
+    │   └── SKILL.md
+    └── ...                         ← one directory per agent
 ```
